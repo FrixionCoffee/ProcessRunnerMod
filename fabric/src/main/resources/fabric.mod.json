@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "id": "processrunnermod",
+  "version": "${version}",
+  "name": "processrunnermod",
+  "description": "Play music when the title of the game is displayed. It runnable both fabric and forge.",
+  "authors": [
+    "SugarCoffee"
+  ],
+  "contact": {
+    "homepage": "https://example.com",
+    "sources": "https://github.com/FrixionCoffee/ProcessRunnerMod"
+  },
+  "license": "Creative Commons Zero v1.0 Universal",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "jp.sugarcoffee.processrunner.fabric.ProcessRunnerModFabric"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=0.7.4",
+    "fabric": "*",
+    "minecraft": ">=1.16.4",
+    "architectury": ">=1.1.55"
+  },
+  "suggests": {
+    "flamingo": "*"
+  }
+}
