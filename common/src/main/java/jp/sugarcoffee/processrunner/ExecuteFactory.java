@@ -91,7 +91,7 @@ public class ExecuteFactory {
 
         private List<String> createCommandList() {
             final List<String> commandList = new ArrayList<>();
-            commandList.add(normalize(configRecord.commandFilePath));
+            commandList.add(normalizeAtStr(configRecord.commandFilePath));
 
             commandList.addAll(
                     Arrays.asList(configRecord.argument.split(" "))
@@ -134,7 +134,7 @@ public class ExecuteFactory {
             }
         }
 
-        private String normalize(Path path) {
+        private String normalizeAtStr(Path path) {
             return path.normalize().toAbsolutePath().toString();
         }
     }
@@ -193,19 +193,6 @@ public class ExecuteFactory {
                 throw new IllegalArgumentException(logPath + "is directory.");
             }
             this.logPath = logPath;
-        }
-
-        void delete() {
-            if (!logPath.toString().endsWith(".log")) {
-                throw new IllegalArgumentException(logPath + "is not .log file.");
-            }
-
-            try {
-                Files.delete(logPath);
-            } catch (IOException e) {
-                e.printStackTrace();
-                throw new RuntimeException(e);
-            }
         }
 
         void optionalCreate() {
