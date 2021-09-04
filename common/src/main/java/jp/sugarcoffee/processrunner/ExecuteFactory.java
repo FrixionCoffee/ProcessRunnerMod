@@ -97,9 +97,11 @@ public class ExecuteFactory {
                     Arrays.asList(configRecord.argument.split(" "))
             );
 
-            return commandList.stream()
-                    .filter(StringUtils::isNotBlank)
-                    .collect(Collectors.toList());
+            return Collections.unmodifiableList(
+                    commandList.stream()
+                            .filter(StringUtils::isNotBlank)
+                            .collect(Collectors.toList())
+            );
 
         }
 
