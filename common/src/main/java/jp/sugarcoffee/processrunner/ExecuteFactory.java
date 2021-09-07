@@ -145,7 +145,7 @@ public class ExecuteFactory {
         this.configRecord = configRecord;
     }
 
-    public Execute create() {
+    Execute create() {
 
         if (configRecord.allIgnore) {
             return createAllIgnore();

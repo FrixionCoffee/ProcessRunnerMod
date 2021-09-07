@@ -23,7 +23,7 @@ public class AdminManager {
      * 管理者権限で起動されていないことを確認する。
      * @throws IllegalEnvironmentError 実行プロセスが管理者権限であるとき
      */
-    public void consumeCheck() throws IllegalEnvironmentError {
+    void consumeCheck() throws IllegalEnvironmentError {
         AdminCheckerFactory
                 .create()
                 .voidCheck();
