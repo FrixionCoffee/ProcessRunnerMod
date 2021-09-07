@@ -3,13 +3,19 @@ package jp.sugarcoffee.processrunner;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class ModLogManager {
-    public static final Logger LOGGER = LogManager.getLogger();
-    public static final boolean isPrint = ConfigManager.KeyHolder.PRINT_LOG4J_INFO_MODE.getValue();
+public class ModLogManager implements StaticResourceCleanable{
+    public static Logger LOGGER = LogManager.getLogger();
+    public static Boolean isPrint = ConfigManager.KeyHolder.PRINT_LOG4J_INFO_MODE.getValue();   //プリミティブだと参照切れなさそうなのでラッパーに変更
 
-    public void pushOptionalInfo(String message) {
+    void pushOptionalInfo(String message) {
         if (isPrint) {
             LOGGER.info(message);
         }
+    }
+
+    @Override
+    public void clean() {
+        LOGGER = null;
+        isPrint = null;
     }
 }

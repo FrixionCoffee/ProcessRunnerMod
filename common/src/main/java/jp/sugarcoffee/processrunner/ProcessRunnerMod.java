@@ -20,6 +20,9 @@ public class ProcessRunnerMod {
 
         final Execute execute = new ExecuteFactory(configRecord).create();
         execute.run();
+
+        final ResourceKiller resourceKiller = new ResourceKiller();
+        resourceKiller.kill();
     }
 
 }

@@ -14,27 +14,36 @@ import java.util.function.Function;
 /**
  * 設定ファイルの管理を行う。が実際のところ殆ど内部クラスが処理しており、実質的に何もしていない
  */
-public class ConfigManager {
-    static final Path CONFIG_DIR = ProcessRunnerExpectPlatform.getConfigDirectory();
+public class ConfigManager implements StaticResourceCleanable {
+    static Path CONFIG_DIR = ProcessRunnerExpectPlatform.getConfigDirectory();
 
     /**
      * ConfigManagerがもっている唯一のメソッド。Configクラスに初期化を丸投げする。
+     *
      * @return 初回起動時で外部プロセスは起動させないなら、ModState.PROCESS_DO_NOT_RUN;
      */
     public ModState init() {
         return new Config().init();
     }
 
+    @Override
+    public void clean() {
+        CONFIG_DIR = null;
+        new KeyHolder().clean();
+        new Config().clean();
+    }
+
     /**
      * Propertiesを扱うためのクラス
      * コンストラクタはgetしたときのStringを R に変換するためのFunctionを要求する
+     *
      * @param <R> Return param
      */
     static class Key<R> {
         public final String KEY_NAME;
 
         /**
-         *  プロパティファイルから読み取ったStringをRに変換する関数
+         * プロパティファイルから読み取ったStringをRに変換する関数
          */
         public final Function<String, R> getValueTranslateFunction;
 
@@ -109,20 +118,20 @@ public class ConfigManager {
      * 各種プロパティ読み取り用のKeyクラスを保管するホルダークラス。
      * ホルダークラスだけど、最初のプロパティ生成時にstore()を呼ぶ必要がある。
      */
-    static class KeyHolder {
-        private static final Properties INIT_PROPERTIES = new Properties();
+    static class KeyHolder implements StaticResourceCleanable {
+        private static Properties INIT_PROPERTIES = new Properties();
 
-        public static final StringKey ARGUMENT = new StringKey("commandArgument");
+        public static StringKey ARGUMENT = new StringKey("commandArgument");
 
-        public static final PathKey COMMAND_FILE_PATH = new PathKey("commandFilePath");
-        public static final PathKey PROCESS_BUILDER_DIR = new PathKey("processBuilderDirPath");
-        public static final PathKey LOG_EXPORT_FILE_PATH = new PathKey("logExportFilePath");
+        public static PathKey COMMAND_FILE_PATH = new PathKey("commandFilePath");
+        public static PathKey PROCESS_BUILDER_DIR = new PathKey("processBuilderDirPath");
+        public static PathKey LOG_EXPORT_FILE_PATH = new PathKey("logExportFilePath");
 
-        public static final BooleanKey PROCESS_WAIT_FOR_MODE = new BooleanKey("processWaitForMode");
-        public static final BooleanKey TEMPORARY_ALL_IGNORE_MODE = new BooleanKey("temporaryAllIgnoreMode");
-        public static final BooleanKey WRITE_EXIT_CODE_MODE = new BooleanKey("writeExitCodeMode");
+        public static BooleanKey PROCESS_WAIT_FOR_MODE = new BooleanKey("processWaitForMode");
+        public static BooleanKey TEMPORARY_ALL_IGNORE_MODE = new BooleanKey("temporaryAllIgnoreMode");
+        public static BooleanKey WRITE_EXIT_CODE_MODE = new BooleanKey("writeExitCodeMode");
 
-        public static final BooleanKey PRINT_LOG4J_INFO_MODE = new BooleanKey("printLog4jInfoMode");
+        public static BooleanKey PRINT_LOG4J_INFO_MODE = new BooleanKey("printLog4jInfoMode");
 
         public static void store() {
             try (final BufferedWriter writer = Files.newBufferedWriter(Config.CONFIG_FILE, StandardCharsets.UTF_8)) {
@@ -132,13 +141,33 @@ public class ConfigManager {
                 throw new RuntimeException(e);
             }
         }
+
+        @Override
+        public void clean() {
+            INIT_PROPERTIES = null;
+            ARGUMENT = null;
+            COMMAND_FILE_PATH = null;
+            PROCESS_BUILDER_DIR = null;
+            LOG_EXPORT_FILE_PATH = null;
+
+            PROCESS_WAIT_FOR_MODE = null;
+            TEMPORARY_ALL_IGNORE_MODE = null;
+            WRITE_EXIT_CODE_MODE = null;
+
+            PRINT_LOG4J_INFO_MODE = null;
+        }
     }
 
     /**
      * プロパティの初期化処理を行うクラス
      */
-    static class Config {
-        public static final Path CONFIG_FILE = CONFIG_DIR.resolve("process_runner_mod.properties").normalize().toAbsolutePath();
+    static class Config implements StaticResourceCleanable{
+        public static Path CONFIG_FILE = CONFIG_DIR.resolve("process_runner_mod.properties").normalize().toAbsolutePath();
+
+        @Override
+        public void clean() {
+            CONFIG_FILE = null;
+        }
 
         enum ConfigFileState {
             INITIALIZED, NON_INITIALIZED
@@ -177,7 +206,6 @@ public class ConfigManager {
         }
 
         /**
-         *
          * @return 外部プロセスを起動させるかさせないか
          */
         public ModState init() {
