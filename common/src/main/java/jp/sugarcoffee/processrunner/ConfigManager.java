@@ -14,7 +14,7 @@ import java.util.function.Function;
 /**
  * 設定ファイルの管理を行う。が実際のところ殆ど内部クラスが処理しており、実質的に何もしていない
  */
-public class ConfigManager implements StaticResourceCleanable {
+public final class ConfigManager implements StaticResourceCleanable {
     static Path CONFIG_DIR = ProcessRunnerExpectPlatform.getConfigDirectory();
 
     /**
@@ -22,7 +22,7 @@ public class ConfigManager implements StaticResourceCleanable {
      *
      * @return 初回起動時で外部プロセスは起動させないなら、ModState.PROCESS_DO_NOT_RUN;
      */
-    public ModState init() {
+    ModState init() {
         return new Config().init();
     }
 
@@ -75,7 +75,7 @@ public class ConfigManager implements StaticResourceCleanable {
      * 普通のString
      * 実装はプロパティの値をそのまま帰すだけ
      */
-    static class StringKey extends Key<String> {
+    static final class StringKey extends Key<String> {
         public StringKey(String KEY_NAME) {
             super(KEY_NAME, Function.identity());
             // String::toStringとほとんど等価(identityはs -> sよりも軽い可能性があるとかなんとか)
@@ -85,7 +85,7 @@ public class ConfigManager implements StaticResourceCleanable {
     /**
      * 設定値がパスを扱っているものに使う。
      */
-    static class PathKey extends Key<Path> {
+    static final class PathKey extends Key<Path> {
 
         public PathKey(String KEY_NAME) {
             super(KEY_NAME, s -> Paths.get(s).toAbsolutePath());
@@ -99,7 +99,7 @@ public class ConfigManager implements StaticResourceCleanable {
     /**
      * 設定値がboolean型である物に使う。"true"などはセットできず例外が送出される。
      */
-    static class BooleanKey extends Key<Boolean> {
+    static final class BooleanKey extends Key<Boolean> {
         public BooleanKey(String KEY_NAME) {
             super(KEY_NAME, Boolean::valueOf);
         }
@@ -133,7 +133,7 @@ public class ConfigManager implements StaticResourceCleanable {
 
         public static BooleanKey PRINT_LOG4J_INFO_MODE = new BooleanKey("printLog4jInfoMode");
 
-        public static void store() {
+        static void store() {
             try (final BufferedWriter writer = Files.newBufferedWriter(Config.CONFIG_FILE, StandardCharsets.UTF_8)) {
                 INIT_PROPERTIES.store(writer, "ProcessRunnerMod create. Don't Use Admin Permission.");
             } catch (IOException e) {
@@ -208,7 +208,7 @@ public class ConfigManager implements StaticResourceCleanable {
         /**
          * @return 外部プロセスを起動させるかさせないか
          */
-        public ModState init() {
+        ModState init() {
             if (optionalCreate() == ConfigFileState.INITIALIZED) {
                 return ModState.PROCESS_RUN;
             }

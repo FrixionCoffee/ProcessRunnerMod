@@ -4,6 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.nio.channels.ClosedChannelException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -14,10 +15,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class ExecuteFactory {
+public final class ExecuteFactory {
     private final ConfigRecord configRecord;
 
-    static class ThreadProcessObserver implements Execute{
+    private static class ThreadProcessObserver implements Execute{
         public final Process process;
 
         public ThreadProcessObserver(Process process) {
@@ -47,7 +48,7 @@ public class ExecuteFactory {
 
     }
 
-    static class BaseExecute implements Execute {
+    private static class BaseExecute implements Execute {
         public final ConfigRecord configRecord;
 
         public BaseExecute(ConfigRecord configRecord) {
@@ -58,8 +59,11 @@ public class ExecuteFactory {
         public void run() {
 
             initLog();
+            LambdaExceptionWrapper.voidRun(this::runProcess, RuntimeException::new);
+        }
+
+        private void runProcess() throws InterruptedException, IOException {
             final ProcessBuilder builder = new ProcessBuilder(createCommandList());
-            try {
                 final Process process = builder
                         .directory(configRecord.processDir.toFile())
                         .redirectErrorStream(true)
@@ -76,11 +80,6 @@ public class ExecuteFactory {
                     observer.run();
                 }
 
-            } catch (IOException | InterruptedException e) {
-
-                e.printStackTrace();
-                throw new RuntimeException(e);
-            }
         }
 
         private void initLog() {
@@ -163,7 +162,7 @@ public class ExecuteFactory {
         };
     }
 
-    final static class ProcessStreamManager {
+    private static final class ProcessStreamManager {
         public static void processClose(final Process process) {
             streamClose(process.getInputStream());
             streamClose(process.getOutputStream());
@@ -178,6 +177,9 @@ public class ExecuteFactory {
 
             try {
                 closeable.close();
+
+            }catch (ClosedChannelException ignore) {
+
             } catch (IOException e) {
                 e.printStackTrace();
                 throw new RuntimeException(e);
@@ -186,7 +188,7 @@ public class ExecuteFactory {
     }
 
 
-    static class LogFileManager {
+    private static class LogFileManager {
 
         public final Path logPath;
 

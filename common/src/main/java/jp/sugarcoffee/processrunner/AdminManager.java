@@ -4,7 +4,7 @@ package jp.sugarcoffee.processrunner;
  * 管理者権限関連のクラス
  * 実際のところ
  */
-public class AdminManager {
+public final class AdminManager {
 
     static class AdminCheckerFactory {
 
@@ -29,18 +29,18 @@ public class AdminManager {
                 .voidCheck();
     }
 
-    interface AdminChecker {
+    private interface AdminChecker {
         default void voidCheck() {
             throw new UnsupportedOperationException();
         }
     }
 
     @SuppressWarnings("unused")
-    static class LinuxAdminChecker implements AdminChecker {
+    static final class LinuxAdminChecker implements AdminChecker {
         // getUid()辺りでできそう
     }
 
-    static class WindowsAdminChecker implements AdminChecker {
+    static final class WindowsAdminChecker implements AdminChecker {
 
         @Override
         public void voidCheck() {

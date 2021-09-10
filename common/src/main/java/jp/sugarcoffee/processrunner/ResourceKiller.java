@@ -9,7 +9,7 @@ import java.util.List;
  *
  * 最初からインスタンス変数だけにしておけばよかった...
  */
-public class ResourceKiller {
+public final class ResourceKiller {
 
     void kill() {
         final List<StaticResourceCleanable> cleanableList = Arrays.asList(

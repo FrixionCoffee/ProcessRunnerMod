@@ -7,47 +7,47 @@ import static jp.sugarcoffee.processrunner.ConfigManager.KeyHolder;
 /**
  * 毎回プロパティ読み取りはコストが大きそうなので、データ保管用のインスタンスでやり取りする
  */
-public class ConfigRecord {
+public final class ConfigRecord {
 
     /**
      * コマンド引数
      */
-    public final String argument;
+    final String argument;
 
     /**
      * 実行可能なパス。ProcessBuilderはシステムpathを見に行くことは保証してないっぽいので、絶対パス推奨。(cmdなら無問題)
      */
-    public final Path commandFilePath;
+    final Path commandFilePath;
 
     /**
      * ProcessBuilderのカレントディレクトリ
      */
-    public final Path processDir;
+    final Path processDir;
 
     /**
      * ログファイルパス
      */
-    public final Path logPath;
+    final Path logPath;
 
     /**
      * 外部プロセスの終了を待機するかどうか
      */
-    public final boolean processWaitFor;
+    final boolean processWaitFor;
 
     /**
      * 一時的に何もしない
      */
-    public final boolean allIgnore;
+    final boolean allIgnore;
 
     /**
      * exitCodeもログに書き込むか
      */
-    public final boolean writeExitCode;
+    final boolean writeExitCode;
 
-    public final boolean infoLog4j;
+    final boolean infoLog4j;
 
 
-    public ConfigRecord() {
+    ConfigRecord() {
 
         argument = KeyHolder.ARGUMENT.getValue();
 
@@ -67,8 +67,8 @@ public class ConfigRecord {
      *
      * @return デバッグ用の読み取り値
      */
-    @Override
-    public String toString() {
+    @SuppressWarnings("unused")
+    String devToString() {
         return "ConfigRecord{" +
                 "argument='" + argument + '\'' +
                 ", commandFilePath=" + commandFilePath +

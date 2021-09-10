@@ -6,7 +6,7 @@ package jp.sugarcoffee.processrunner;
  *
  * このMODはこのエラーをcatchすることはありません。
  */
-public class IllegalEnvironmentError extends Error {
+public final class IllegalEnvironmentError extends Error {
 
     public IllegalEnvironmentError(String message) {
         super(message);
